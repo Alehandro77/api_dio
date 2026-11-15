@@ -32,7 +32,7 @@ class _SelectZodiacScreen extends State<SelectZodiacScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Выберите свой знак зодиака")),
+      appBar: AppBar(title: Text("Выберите свой Знак Зодиака")),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: GridView.builder(

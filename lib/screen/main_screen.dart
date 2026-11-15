@@ -1,6 +1,7 @@
 import 'package:api_dio/models/horoscope_model.dart';
 import 'package:api_dio/widgets/horoscope_card.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../services/horoscope_service.dart';
 
@@ -15,7 +16,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _service = HoroscopeService();
+  final _service = GetIt.instance<HoroscopeService>();
   Horoscope? _horoscope;
   bool _isLoading = false;
   late String _address;
@@ -81,13 +82,21 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
+          maxLines: 2,
+          softWrap: true,
           "Привет ${widget.name}, у $_address сегодня такие вот дела:",
         ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _horoscope == null
-          ? const Center(child: Text("Не удалось загрузить гороскоп"))
+          ? Center(
+              child: Text(
+                "Не удалось загрузить гороскоп (╥_╥)",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+            )
           : HoroscopeCard(horoscope: _horoscope!),
     );
   }

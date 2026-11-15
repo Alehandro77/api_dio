@@ -1,4 +1,5 @@
 import 'package:api_dio/screen/root_screen.dart';
+import 'package:api_dio/services/horoscope_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -23,6 +24,9 @@ void setupService() {
       ),
     )..interceptors.addAll([LogginInterseptor(), PrettyDioLogger()]),
   );
+  GetIt.instance.registerLazySingleton<HoroscopeService>(
+    () => HoroscopeService(),
+  );
 }
 
 class QuotesApp extends StatelessWidget {
@@ -30,12 +34,6 @@ class QuotesApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Qoutes',
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Гороскопчик UwU')),
-        body: RootScreen(),
-      ),
-    );
+    return MaterialApp(home: const RootScreen());
   }
 }

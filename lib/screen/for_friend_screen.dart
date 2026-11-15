@@ -2,6 +2,7 @@ import 'package:api_dio/models/horoscope_model.dart';
 import 'package:api_dio/services/horoscope_service.dart';
 import 'package:api_dio/widgets/horoscope_card.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class ForFriendScreen extends StatefulWidget {
   const ForFriendScreen({super.key});
@@ -14,7 +15,8 @@ class _ForFriendScreenState extends State<ForFriendScreen> {
   String? _zodiac;
   Horoscope? _horoscope;
   bool _isLoading = false;
-  final _service = HoroscopeService();
+  final _service = GetIt.instance<HoroscopeService>();
+
   final Map<String, String> _zodiacSigns = {
     'Овен': 'aries',
     'Телец': 'taurus',
@@ -42,35 +44,66 @@ class _ForFriendScreenState extends State<ForFriendScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Посмотри Гороскоп для своего друга @w@")),
+      appBar: AppBar(
+        title: Text(
+          maxLines: 2,
+          softWrap: true,
+          "Посмотри Гороскоп для своего друга @w@",
+        ),
+      ),
       body: Column(
         children: [
-          DropdownButton<String>(
-            value: _zodiac,
-            items: _zodiacSigns.entries.map((entry) {
-              return DropdownMenuItem<String>(
-                value: entry.value,
-                child: Text(entry.key),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _zodiac = newValue!;
-              });
-              _loadHoroscope(_zodiac!);
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Знак Зодиака друга: ", style: TextStyle(fontSize: 18)),
+              SizedBox(width: 15),
+              DropdownButton<String>(
+                underline: SizedBox(),
+                value: _zodiac,
+                items: _zodiacSigns.entries.map((entry) {
+                  return DropdownMenuItem<String>(
+                    value: entry.value,
+                    child: Text(entry.key),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _zodiac = newValue!;
+                  });
+                  _loadHoroscope(_zodiac!);
+                },
+              ),
+            ],
           ),
           const SizedBox(height: 20),
           _zodiac == null
-              ? Center(child: Text("Выберите ЗЗ друга"))
+              ? Center(
+                  child: Text(
+                    "Выберите Знак Зодиака друга",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                )
               : _isLoading
               ? Center(child: CircularProgressIndicator())
               : _horoscope == null
-              ? Center(child: Text("не удалось загрузить гороскоп"))
+              ? Center(
+                  child: Text(
+                    "Не удалось загрузить гороскоп (╥_╥)",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                )
               : Center(
                   child: Column(
                     children: [
-                      Text("У ваше друга сегодня:"),
+                      Text(
+                        "У ваше друга сегодня:",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       HoroscopeCard(horoscope: _horoscope!),
                     ],
                   ),

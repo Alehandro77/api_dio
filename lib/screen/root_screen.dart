@@ -19,6 +19,12 @@ class _RootScreenState extends State<RootScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Гороскопчик UwU",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+      ),
       body: _zodiac.isEmpty
           ? SelectZodiacScreen(
               onZodiacSelected: (newZodiac) {
@@ -54,7 +60,10 @@ class _RootScreenState extends State<RootScreen> {
                   icon: Icon(Icons.star),
                   label: "Гороскоп",
                 ),
-                BottomNavigationBarItem(icon: Icon(Icons.star), label: "Другу"),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.insert_emoticon_rounded),
+                  label: "Другу",
+                ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
                   label: "Профиль",

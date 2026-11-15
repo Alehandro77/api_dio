@@ -17,11 +17,17 @@ class HoroscopeCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(horoscope.sign),
+              Text(
+                horoscope.sign,
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 4),
-              Text(horoscope.date),
+              Text(
+                horoscope.date,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               const Divider(height: 32),
-              Text(horoscope.text),
+              Text(horoscope.text, style: TextStyle(fontSize: 18)),
             ],
           ),
         ),

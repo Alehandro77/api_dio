@@ -42,6 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _currentName = widget.name;
     _currentZodiac = widget.zodiac;
+    _nameController.text = _currentName;
   }
 
   @override
@@ -50,52 +51,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  void _clearController() {
-    _nameController.text = '';
-  }
-
   void _saveProfile() {
-    final name = _nameController.text;
+    final String name = _nameController.text;
     setState(() {
       _currentName = name;
     });
+
     widget.onSave(name, _currentZodiac);
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Профиль сохранен')));
-    _clearController();
+        .showSnackBar(const SnackBar(content: Text('Профиль сохранен (⌐■_■)')));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Профиль')),
+      appBar: AppBar(title: Text('Профиль ( ˘ω˘ )')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Ваш знак зодиака: ${_zodiacRu[_currentZodiac]}'),
-            Text('Имя: $_currentName'),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Введите ваше имя',
-                border: OutlineInputBorder(),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Ваш Знак Зодиака:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 15),
+                DropdownButton<String>(
+                  value: _currentZodiac,
+                  items: _zodiacRu.entries.map((entry) {
+                    return DropdownMenuItem<String>(
+                      value: entry.key,
+                      child: Text(entry.value),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _currentZodiac = newValue!;
+                    });
+                  },
+                ),
+              ],
             ),
-            DropdownButton<String>(
-              value: _currentZodiac,
-              items: _zodiacRu.entries.map((entry) {
-                return DropdownMenuItem<String>(
-                  value: entry.key,
-                  child: Text(entry.value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _currentZodiac = newValue!;
-                });
-              },
+
+            Text(
+              'Имя: $_currentName',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsetsGeometry.all(16),
+              child: TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Изменить имя: ',
+                  border: OutlineInputBorder(),
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
