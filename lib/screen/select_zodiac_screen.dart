@@ -1,9 +1,9 @@
-import 'package:api_dio/screen/main_screen.dart';
 import 'package:api_dio/widgets/zodiac_button.dart';
 import 'package:flutter/material.dart';
 
 class SelectZodiacScreen extends StatefulWidget {
-  const SelectZodiacScreen({super.key});
+  final void Function(String zodiac) onZodiacSelected;
+  const SelectZodiacScreen({super.key, required this.onZodiacSelected});
 
   @override
   State<StatefulWidget> createState() => _SelectZodiacScreen();
@@ -26,10 +26,7 @@ class _SelectZodiacScreen extends State<SelectZodiacScreen> {
   ];
 
   void _onZodiacSelected(String zodiac) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => MainScreen(zodiac: zodiac)),
-    );
+    widget.onZodiacSelected(zodiac);
   }
 
   @override

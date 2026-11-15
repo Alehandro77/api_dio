@@ -1,4 +1,4 @@
-import 'package:api_dio/screen/select_zodiac_screen.dart';
+import 'package:api_dio/screen/root_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -34,7 +34,7 @@ class QuotesApp extends StatelessWidget {
       title: 'Qoutes',
       home: Scaffold(
         appBar: AppBar(title: const Text('Гороскопчик UwU')),
-        body: SelectZodiacScreen(),
+        body: RootScreen(),
       ),
     );
   }
