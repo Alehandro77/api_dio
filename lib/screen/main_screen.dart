@@ -1,103 +1,77 @@
-import 'package:api_dio/models/horoscope_model.dart';
+import 'package:api_dio/cubit/horoscope_cubit.dart';
 import 'package:api_dio/widgets/horoscope_card.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-
-import '../services/horoscope_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainScreen extends StatefulWidget {
-  final String zodiac;
-  final String name;
-
-  const MainScreen({super.key, required this.zodiac, required this.name});
+  const MainScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _service = GetIt.instance<HoroscopeService>();
-  Horoscope? _horoscope;
-  bool _isLoading = false;
-  late String _address;
-
-  void _loadAddress() {
-    String address = "aries";
-    switch (widget.zodiac) {
-      case 'aries':
-        address = "Овнов";
-      case 'taurus':
-        address = "Тельцов";
-      case 'gemini':
-        address = "Близнецов";
-      case 'cancer':
-        address = "Раков";
-      case 'virgo':
-        address = "Дев";
-      case 'libra':
-        address = "Весов";
-      case 'scorpio':
-        address = "Скорпионов";
-      case 'sagittarius':
-        address = "Стрельцоы";
-      case 'capricorn':
-        address = "Козерогов";
-      case 'aquarius':
-        address = "Водолеев";
-      case 'pisces':
-        address = "Рыб";
-      case 'leo':
-        address = "Львов";
-    }
-    setState(() => _address = address);
-  }
-
   @override
   void initState() {
     super.initState();
-    _loadHoroscope(widget.zodiac);
-    _loadAddress();
+    context.read<HoroscopeCubit>().loadHoroscope();
   }
 
-  @override
-  void didUpdateWidget(covariant MainScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.zodiac != widget.zodiac) {
-      _loadHoroscope(widget.zodiac);
-      _loadAddress();
+  String _getAddress(String zodiac) {
+    switch (zodiac) {
+      case 'aries':
+        return "Овнов";
+      case 'taurus':
+        return "Тельцов";
+      case 'gemini':
+        return "Близнецов";
+      case 'cancer':
+        return "Раков";
+      case 'virgo':
+        return "Дев";
+      case 'libra':
+        return "Весов";
+      case 'scorpio':
+        return "Скорпионов";
+      case 'sagittarius':
+        return "Стрельцоы";
+      case 'capricorn':
+        return "Козерогов";
+      case 'aquarius':
+        return "Водолеев";
+      case 'pisces':
+        return "Рыб";
+      case 'leo':
+        return "Львов";
+      default:
+        return "";
     }
-  }
-
-  Future<void> _loadHoroscope(String zodiac) async {
-    setState(() => _isLoading = true);
-    final horoscope = await _service.fetchHoroscope(zodiac);
-    setState(() {
-      _horoscope = horoscope;
-      _isLoading = false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<HoroscopeCubit>().state;
+    final address = _getAddress(state.zodiac);
+
+    if (state.zodiac.isEmpty) {
+      return const Center(child: Text("Выберте Знак Зодиака"));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           maxLines: 2,
           softWrap: true,
-          "Привет ${widget.name}, у $_address сегодня такие вот дела:",
+          "Привет ${state.name}, у $address сегодня такие вот дела:",
         ),
       ),
-      body: _isLoading
+      body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _horoscope == null
-          ? Center(
-              child: Text(
-                "Не удалось загрузить гороскоп (╥_╥)",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-            )
-          : HoroscopeCard(horoscope: _horoscope!),
+          : state.error != null
+          ? Center(child: Text(state.error!))
+          : state.horoscope != null
+          ? HoroscopeCard(horoscope: state.horoscope!)
+          : const Center(child: Text("Чё-то не работает")),
     );
   }
 }

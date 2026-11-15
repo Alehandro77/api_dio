@@ -1,7 +1,10 @@
+import 'package:api_dio/cubit/friend_horoscope_cubit.dart';
+import 'package:api_dio/cubit/horoscope_cubit.dart';
 import 'package:api_dio/screen/root_screen.dart';
 import 'package:api_dio/services/horoscope_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -12,7 +15,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   setupService();
-  runApp(const QuotesApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => GetIt.instance<HoroscopeCubit>()),
+        BlocProvider(create: (_) => GetIt.instance<FriendHoroscopeCubit>()),
+      ],
+      child: const HoroscopeApp(),
+    ),
+  );
 }
 
 void setupService() {
@@ -27,10 +38,14 @@ void setupService() {
   GetIt.instance.registerLazySingleton<HoroscopeService>(
     () => HoroscopeService(),
   );
+  GetIt.instance.registerLazySingleton<HoroscopeCubit>(() => HoroscopeCubit());
+  GetIt.instance.registerLazySingleton<FriendHoroscopeCubit>(
+    () => FriendHoroscopeCubit(),
+  );
 }
 
-class QuotesApp extends StatelessWidget {
-  const QuotesApp({super.key});
+class HoroscopeApp extends StatelessWidget {
+  const HoroscopeApp({super.key});
 
   @override
   Widget build(BuildContext context) {

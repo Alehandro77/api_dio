@@ -1,16 +1,9 @@
+import 'package:api_dio/cubit/horoscope_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String zodiac;
-  final String name;
-  final void Function(String newName, String newZodiac) onSave;
-
-  const ProfileScreen({
-    super.key,
-    required this.zodiac,
-    required this.name,
-    required this.onSave,
-  });
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -40,8 +33,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _currentName = widget.name;
-    _currentZodiac = widget.zodiac;
+    final state = context.read<HoroscopeCubit>().state;
+    _currentName = state.name;
+    _currentZodiac = state.zodiac;
     _nameController.text = _currentName;
   }
 
@@ -52,12 +46,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _saveProfile() {
-    final String name = _nameController.text;
-    setState(() {
-      _currentName = name;
-    });
-
-    widget.onSave(name, _currentZodiac);
+    final cubit = context.read<HoroscopeCubit>();
+    _currentName = _nameController.text;
+    cubit.setName(_currentName);
+    cubit.setZodiac(_currentZodiac);
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Профиль сохранен (⌐■_■)')));
   }

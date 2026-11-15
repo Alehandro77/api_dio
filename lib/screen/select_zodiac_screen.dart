@@ -1,9 +1,10 @@
+import 'package:api_dio/cubit/horoscope_cubit.dart';
 import 'package:api_dio/widgets/zodiac_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SelectZodiacScreen extends StatefulWidget {
-  final void Function(String zodiac) onZodiacSelected;
-  const SelectZodiacScreen({super.key, required this.onZodiacSelected});
+  const SelectZodiacScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _SelectZodiacScreen();
@@ -26,7 +27,7 @@ class _SelectZodiacScreen extends State<SelectZodiacScreen> {
   ];
 
   void _onZodiacSelected(String zodiac) {
-    widget.onZodiacSelected(zodiac);
+    context.read<HoroscopeCubit>().setZodiac(zodiac);
   }
 
   @override

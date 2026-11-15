@@ -1,8 +1,10 @@
+import 'package:api_dio/cubit/horoscope_cubit.dart';
 import 'package:api_dio/screen/for_friend_screen.dart';
 import 'package:api_dio/screen/main_screen.dart';
 import 'package:api_dio/screen/profile_screen.dart';
 import 'package:api_dio/screen/select_zodiac_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});
@@ -13,11 +15,13 @@ class RootScreen extends StatefulWidget {
 
 class _RootScreenState extends State<RootScreen> {
   int _currentIndex = 0;
-  String _zodiac = '';
-  String _name = '';
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<HoroscopeCubit>().state;
+
+    if (state.zodiac.isEmpty) return const SelectZodiacScreen();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -25,51 +29,24 @@ class _RootScreenState extends State<RootScreen> {
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
       ),
-      body: _zodiac.isEmpty
-          ? SelectZodiacScreen(
-              onZodiacSelected: (newZodiac) {
-                setState(() => _zodiac = newZodiac);
-              },
-            )
-          : IndexedStack(
-              index: _currentIndex,
-              children: [
-                MainScreen(zodiac: _zodiac, name: _name),
-                ForFriendScreen(),
-                ProfileScreen(
-                  zodiac: _zodiac,
-                  name: _name,
-                  onSave: (newName, newZodiac) {
-                    setState(() {
-                      _name = newName;
-                      _zodiac = newZodiac;
-                    });
-                  },
-                ),
-              ],
-            ),
-      bottomNavigationBar: _zodiac.isEmpty
-          ? null
-          : BottomNavigationBar(
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() => _currentIndex = index);
-              },
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.star),
-                  label: "Гороскоп",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.insert_emoticon_rounded),
-                  label: "Другу",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: "Профиль",
-                ),
-              ],
-            ),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [MainScreen(), ForFriendScreen(), ProfileScreen()],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+        },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.star), label: "Гороскоп"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.insert_emoticon_rounded),
+            label: "Другу",
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Профиль"),
+        ],
+      ),
     );
   }
 }
